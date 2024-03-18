@@ -60,6 +60,12 @@ variable "pod_network_cidr_block" {
   default     = null
 }
 
+variable "service_cidr_block" {
+  type        = string
+  description = "**This is an optional variable with a default value of null**. CIDR block for the Service network of the cluster. If null, the cluster is created with Kubeadm default: \"10.96.0.0/12\"."
+  default     = null
+}
+
 variable "master_instance_type" {
   type        = string
   description = "EC2 instance type for the master node (must have at least 2 CPUs and 2 GB RAM)."

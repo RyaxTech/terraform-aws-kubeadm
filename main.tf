@@ -160,7 +160,8 @@ resource "aws_instance" "master" {
     {
       node              = "master",
       token             = local.token,
-      cidr              = var.pod_network_cidr_block
+      cidr              = var.pod_network_cidr_block,
+      service_cidr      = var.service_cidr_block,
       master_public_ip  = aws_eip.master.public_ip,
       master_private_ip = null,
       worker_index      = null
@@ -187,6 +188,7 @@ resource "aws_instance" "workers" {
       node              = "worker",
       token             = local.token,
       cidr              = null,
+      service_cidr      = null,
       master_public_ip  = null,
       master_private_ip = aws_instance.master.private_ip,
       worker_index      = count.index
