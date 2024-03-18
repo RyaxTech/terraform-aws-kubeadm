@@ -78,6 +78,12 @@ variable "num_workers" {
   default     = 2
 }
 
+variable "ami" {
+  type        = string
+  description = "EC2 AMI to install on all instances."
+  default     = ""
+}
+
 variable "tags" {
   type        = map(string)
   description = "A set of tags to assign to the created AWS resources. These tags will be assigned in addition to the default tags. The default tags include \"terraform-kubeadm:cluster\" which is assigned to all resources and whose value is the cluster name, and \"terraform-kubeadm:node\" which is assigned to the EC2 instances and whose value is the name of the Kubernetes node that this EC2 corresponds to."

@@ -131,7 +131,7 @@ locals {
 
 data "aws_ami" "ubuntu" {
   # AMI owner ID of Canonical
-  owners      = ["099720109477"] 
+  owners      = ["099720109477"]
   most_recent = true
   filter {
     name   = "name"
@@ -140,7 +140,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "master" {
-  ami           = data.aws_ami.ubuntu.image_id
+  ami           = var.ami != "" ? var.ami : data.aws_ami.ubuntu.image_id
   instance_type = var.master_instance_type
   subnet_id     = var.subnet_id
   key_name      = aws_key_pair.main.key_name
@@ -150,7 +150,7 @@ resource "aws_instance" "master" {
     aws_security_group.ingress_k8s.id,
     aws_security_group.ingress_ssh.id
   ]
-  tags      = merge(local.tags, { "terraform-kubeadm:node" = "master" })
+  tags = merge(local.tags, { "terraform-kubeadm:node" = "master" })
   # Saved in: /var/lib/cloud/instances/<instance-id>/user-data.txt [1]
   # Logs in:  /var/log/cloud-init-output.log [2]
   # [1] https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts
@@ -170,7 +170,7 @@ resource "aws_instance" "master" {
 
 resource "aws_instance" "workers" {
   count                       = var.num_workers
-  ami                         = data.aws_ami.ubuntu.image_id
+  ami                         = var.ami != "" ? var.ami : data.aws_ami.ubuntu.image_id
   instance_type               = var.worker_instance_type
   subnet_id                   = var.subnet_id
   associate_public_ip_address = true
@@ -180,7 +180,7 @@ resource "aws_instance" "workers" {
     aws_security_group.ingress_internal.id,
     aws_security_group.ingress_ssh.id
   ]
-  tags      = merge(local.tags, { "terraform-kubeadm:node" = "worker-${count.index}" })
+  tags = merge(local.tags, { "terraform-kubeadm:node" = "worker-${count.index}" })
   user_data = templatefile(
     "${path.module}/user-data.tftpl",
     {
